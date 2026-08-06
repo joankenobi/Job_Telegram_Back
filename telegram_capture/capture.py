@@ -1,4 +1,6 @@
+import calendar
 import json
+import re
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse as parse_date
 
@@ -18,7 +20,23 @@ def get_yesterday_range() -> tuple[datetime, datetime]:
         tzinfo=timezone.utc
     )
     return yesterday_start, now
-    return yesterday_start, now
+
+
+def get_month_range(month_str: str) -> tuple[datetime, datetime]:
+    match = re.match(r'^(\d{2})-(\d{4})$', month_str)
+    if not match:
+        raise ValueError(
+            f"Invalid month format: '{month_str}'. Expected 'MM-YYYY' (e.g. '07-2026')"
+        )
+    month_num = int(match.group(1))
+    year = int(match.group(2))
+    if month_num < 1 or month_num > 12:
+        raise ValueError(f"Invalid month number: {month_num}. Must be 01-12."
+        )
+    last_day = calendar.monthrange(year, month_num)[1]
+    start = datetime(year, month_num, 1, 0, 0, 0, tzinfo=timezone.utc)
+    end = datetime(year, month_num, last_day, 23, 59, 59, tzinfo=timezone.utc)
+    return start, end
 
 
 async def capture_channel(
@@ -27,33 +45,50 @@ async def capture_channel(
     channel_identifier: str,
     limit: int | None = None,
     scheduled: bool = False,
+    month: str | None = None,
 ):
     entity = await client.get_entity(channel_identifier)
+    channel_id:str = client.get_channel_id_str(entity)
+    channel_title=getattr(entity, "title", None),
 
-    start_date, end_date = get_yesterday_range()
+    if month:
+        start_date, end_date = get_month_range(month)
+    else:
+        start_date, end_date = get_yesterday_range()
 
     captured = 0
     skipped = 0
 
+    # When using --month, don't pass limit to iter_messages (it limits total
+    # fetched messages from the API, not captured ones). Apply limit inside
+    # the loop instead so we iterate far enough back to reach the target month.
+    iter_limit = None if month else limit
+
     async for telethon_message in client.iter_messages(
-        entity, limit=limit
+        entity, limit=iter_limit
     ):
+        telethon_message: TelethonMessage
+        print(telethon_message.to_json())
         if telethon_message.date < start_date:
-            if telethon_message.date < start_date - timedelta(days=7):
+            if not month and telethon_message.date < start_date - timedelta(days=7):
                 break
             continue
         if telethon_message.date > end_date:
             continue
 
+        # Apply limit to captured count when using --month
+        if month and limit and captured >= limit:
+            break
+
         if await db.message_exists(
-            client.get_channel_id_str(entity), telethon_message.id
+            channel_id, telethon_message.id
         ):
             skipped += 1
             continue
 
         media_path, media_type = await download_media(
             telethon_message,
-            client.get_channel_id_str(entity),
+            channel_id,
             getattr(entity, "title", None),
         )
 
@@ -66,7 +101,7 @@ async def capture_channel(
         )
 
         msg = Message(
-            channel_id=client.get_channel_id_str(entity),
+            channel_id=channel_id,
             channel_title=getattr(entity, "title", None),
             message_id=telethon_message.id,
             date=telethon_message.date,

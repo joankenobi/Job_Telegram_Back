@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import re
 import sys
 import signal
 import platform
@@ -50,6 +51,7 @@ async def run(args):
             channel_identifier=args.channel,
             limit=args.limit,
             scheduled=args.scheduled,
+            month=args.month,
         )
 
         total = await db.get_message_count()
@@ -163,6 +165,10 @@ def main():
         help="Run in scheduled mode: captures messages from yesterday to now",
     )
     parser.add_argument(
+        "--month",
+        help="Capture messages from a specific month (format: MM-YYYY, e.g. 07-2026)",
+    )
+    parser.add_argument(
         "--list-channels",
         action="store_true",
         help="List all your channels and groups, then exit",
@@ -197,6 +203,19 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.month:
+        if not re.match(r'^\d{2}-\d{4}$', args.month):
+            print(f"Error: --month must be in MM-YYYY format (e.g. 07-2026), got: '{args.month}'")
+            sys.exit(1)
+        month_num = int(args.month.split('-')[0])
+        if month_num < 1 or month_num > 12:
+            print(f"Error: --month month number must be 01-12, got: {month_num}")
+            sys.exit(1)
+
+    if args.month and args.scheduled:
+        print("Error: --month and --scheduled are mutually exclusive")
+        sys.exit(1)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
