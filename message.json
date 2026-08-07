@@ -1,0 +1,565 @@
+        {
+            "json": [
+                {
+                    "_": "Message",
+                    "id": 222650,
+                    "peer_id": {
+                        "_": "PeerChannel",
+                        "channel_id": 1298835751
+                    },
+                    "date": "2026-08-05T16:05:17+00:00",
+                    "message": "",
+                    "out": false,
+                    "mentioned": false,
+                    "media_unread": false,
+                    "silent": false,
+                    "post": false,
+                    "from_scheduled": false,
+                    "legacy": false,
+                    "edit_hide": false,
+                    "pinned": false,
+                    "noforwards": false,
+                    "invert_media": false,
+                    "offline": false,
+                    "video_processing_pending": false,
+                    "paid_suggested_post_stars": false,
+                    "paid_suggested_post_ton": false,
+                    "from_id": {
+                        "_": "PeerUser",
+                        "user_id": 7103552925
+                    },
+                    "from_boosts_applied": null,
+                    "from_rank": null,
+                    "saved_peer_id": null,
+                    "fwd_from": null,
+                    "via_bot_id": null,
+                    "via_business_bot_id": null,
+                    "guestchat_via_from": null,
+                    "reply_to": null,
+                    "media": {
+                        "_": "MessageMediaPhoto",
+                        "spoiler": false,
+                        "live_photo": false,
+                        "photo": {
+                            "_": "Photo",
+                            "id": 5161366481869147242,
+                            "access_hash": -2637126584163365964,
+                            "file_reference": "Ak1qqScAA2W6anNkGuFgmja3mfz8BD45GCjhO6k=",
+                            "date": "2026-08-05T16:04:54+00:00",
+                            "sizes": [
+                                {
+                                    "_": "PhotoStrippedSize",
+                                    "type": "i",
+                                    "bytes": "ASggblWVUC4YnrU/yLFgYyehPpWa8concF9hU92xUu5xwrj2AkNIadjTicmMKwHmZI+tQJJKbnBPy+npVQyybuZOR0zI1MhkmF1HmbdlgD82aYgnlaSZ2bGc+1MZh/s0SMRI4ZQDuPA//XTS+RznH+fegA6jqvWkGRKpBGc8Ypdwxjn/AD+NLHtaaNV4O4dqAC4J89ioKjPHJ5po3bRkmiigBGGT7+9IuRIDiiigDw=="
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "m",
+                                    "w": 256,
+                                    "h": 320,
+                                    "size": 34185
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "x",
+                                    "w": 640,
+                                    "h": 800,
+                                    "size": 129955
+                                },
+                                {
+                                    "_": "PhotoSizeProgressive",
+                                    "type": "y",
+                                    "w": 1024,
+                                    "h": 1280,
+                                    "sizes": [
+                                        21426,
+                                        61013,
+                                        106305,
+                                        167835,
+                                        222801
+                                    ]
+                                }
+                            ],
+                            "dc_id": 1,
+                            "has_stickers": false,
+                            "video_sizes": []
+                        },
+                        "ttl_seconds": null,
+                        "video": null
+                    },
+                    "reply_markup": null,
+                    "entities": [],
+                    "views": null,
+                    "forwards": null,
+                    "replies": {
+                        "_": "MessageReplies",
+                        "replies": 0,
+                        "replies_pts": 471101,
+                        "comments": false,
+                        "recent_repliers": [],
+                        "channel_id": null,
+                        "max_id": null,
+                        "read_max_id": null
+                    },
+                    "edit_date": null,
+                    "post_author": null,
+                    "grouped_id": 14287567333918265,
+                    "reactions": null,
+                    "restriction_reason": [],
+                    "ttl_period": 86400,
+                    "quick_reply_shortcut_id": null,
+                    "effect": null,
+                    "factcheck": null,
+                    "report_delivery_until_date": null,
+                    "paid_message_stars": null,
+                    "suggested_post": null,
+                    "schedule_repeat_period": null,
+                    "summary_from_language": null,
+                    "rich_message": null
+                },
+                {
+                    "_": "Message",
+                    "id": 222649,
+                    "peer_id": {
+                        "_": "PeerChannel",
+                        "channel_id": 1298835751
+                    },
+                    "date": "2026-08-05T16:05:16+00:00",
+                    "message": "",
+                    "out": false,
+                    "mentioned": false,
+                    "media_unread": false,
+                    "silent": false,
+                    "post": false,
+                    "from_scheduled": false,
+                    "legacy": false,
+                    "edit_hide": false,
+                    "pinned": false,
+                    "noforwards": false,
+                    "invert_media": false,
+                    "offline": false,
+                    "video_processing_pending": false,
+                    "paid_suggested_post_stars": false,
+                    "paid_suggested_post_ton": false,
+                    "from_id": {
+                        "_": "PeerUser",
+                        "user_id": 7103552925
+                    },
+                    "from_boosts_applied": null,
+                    "from_rank": null,
+                    "saved_peer_id": null,
+                    "fwd_from": null,
+                    "via_bot_id": null,
+                    "via_business_bot_id": null,
+                    "guestchat_via_from": null,
+                    "reply_to": null,
+                    "media": {
+                        "_": "MessageMediaPhoto",
+                        "spoiler": false,
+                        "live_photo": false,
+                        "photo": {
+                            "_": "Photo",
+                            "id": 5161366481869147243,
+                            "access_hash": 5835556771257216153,
+                            "file_reference": "Ak1qqScAA2W5anNkGmYl+mAURtYhy+imxkswpIc=",
+                            "date": "2026-08-05T16:04:54+00:00",
+                            "sizes": [
+                                {
+                                    "_": "PhotoStrippedSize",
+                                    "type": "i",
+                                    "bytes": "ASggaZJncsGVUycA96R55lmIRsLgYGQOoHrTI5BJGAcBhweKjunBnPyp8oA5zzxSGSG6mx984P8AtL/hTZLmcJkMR+IP9Kh3kDgKPxNNY99qn86Yh1s2JQGztbg0j7hI4O7K4BxVhLiPCnJ+UdgagndZJ3dSCG9jQMQZx/FTZM4HXHvQCoGMD8qCQeOB+FAhyi4CbNzKB/Dg/wCFOHnLzvYH6H6+nvRRQAYmxw7D8D/hTX+0MMFnbPUYNFFAHw=="
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "m",
+                                    "w": 256,
+                                    "h": 320,
+                                    "size": 31804
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "x",
+                                    "w": 640,
+                                    "h": 800,
+                                    "size": 115063
+                                },
+                                {
+                                    "_": "PhotoSizeProgressive",
+                                    "type": "y",
+                                    "w": 1024,
+                                    "h": 1280,
+                                    "sizes": [
+                                        19234,
+                                        50208,
+                                        93570,
+                                        143006,
+                                        187903
+                                    ]
+                                }
+                            ],
+                            "dc_id": 1,
+                            "has_stickers": false,
+                            "video_sizes": []
+                        },
+                        "ttl_seconds": null,
+                        "video": null
+                    },
+                    "reply_markup": null,
+                    "entities": [],
+                    "views": null,
+                    "forwards": null,
+                    "replies": {
+                        "_": "MessageReplies",
+                        "replies": 0,
+                        "replies_pts": 471101,
+                        "comments": false,
+                        "recent_repliers": [],
+                        "channel_id": null,
+                        "max_id": null,
+                        "read_max_id": null
+                    },
+                    "edit_date": null,
+                    "post_author": null,
+                    "grouped_id": 14287567333918265,
+                    "reactions": null,
+                    "restriction_reason": [],
+                    "ttl_period": 86400,
+                    "quick_reply_shortcut_id": null,
+                    "effect": null,
+                    "factcheck": null,
+                    "report_delivery_until_date": null,
+                    "paid_message_stars": null,
+                    "suggested_post": null,
+                    "schedule_repeat_period": null,
+                    "summary_from_language": null,
+                    "rich_message": null
+                },
+                {
+                    "_": "Message",
+                    "id": 222648,
+                    "peer_id": {
+                        "_": "PeerChannel",
+                        "channel_id": 1298835751
+                    },
+                    "date": "2026-08-05T16:00:21+00:00",
+                    "message": "Estimada Red \ud83d\ude0a#CARACAS\n\nEstamos en la b\u00fasqueda de los siguientes cargos, Para Tienda Mango Bajito Ubicada en Centro comercial Parque Cerro Verde: \n\n\ud83d\udcccCajera \n\ud83d\udccc\u00a0Asesor de Venta \n\nNo requieres experiencia, debes ser Mayor de edad, Responsable, con buena presencia, y ganas de Trabajar. Ofrecemos Estabilidad Laboral, y Beneficios    \n\nSi cumples con el perfil y quieres formar parte de un equipo din\u00e1mico acercate a la tienda de Mango Bajito ubicada en el Centro comercial cerro verde Nivel Galeria local G-84.\n\nPara una entrevista tecnica entre las 10am a 3pm, lleva tu Curriculum impreso y cedula laminada Te esperamos!!! o env\u00edanos tu S\u00edntesis Curricular a trav\u00e9s del correo electr\u00f3nico indicando el cargo a postularse: \n\n\u00a0mangobajito077@gmail.com\u00a0\n\nPreferible Residenciado California, Marques, Boleita, Los Ruices, Los Dos Caminos, Petare, Guairita, cafetal, Hatillo, los Naranjos, lo mas cercano al Centro comercial Parque Cerro Verde (Excluyente)\n\n(Contamos con Transporte en cada turno de trabajo de la California a la tienda y de regreso a la California)\n\n\ud83d\udcf2\u00a0\u00a1Si conoces a alguien que le pueda interesar comp\u00e1rteselo!\n\n\u00a1TE ESPERAMOS!\n\u00a1\u00c9xitos!",
+                    "out": false,
+                    "mentioned": false,
+                    "media_unread": false,
+                    "silent": false,
+                    "post": false,
+                    "from_scheduled": false,
+                    "legacy": false,
+                    "edit_hide": true,
+                    "pinned": false,
+                    "noforwards": false,
+                    "invert_media": false,
+                    "offline": false,
+                    "video_processing_pending": false,
+                    "paid_suggested_post_stars": false,
+                    "paid_suggested_post_ton": false,
+                    "from_id": {
+                        "_": "PeerUser",
+                        "user_id": 7317017621
+                    },
+                    "from_boosts_applied": null,
+                    "from_rank": null,
+                    "saved_peer_id": null,
+                    "fwd_from": null,
+                    "via_bot_id": null,
+                    "via_business_bot_id": null,
+                    "guestchat_via_from": null,
+                    "reply_to": null,
+                    "media": null,
+                    "reply_markup": null,
+                    "entities": [
+                        {
+                            "_": "MessageEntityHashtag",
+                            "offset": 15,
+                            "length": 8
+                        },
+                        {
+                            "_": "MessageEntityEmail",
+                            "offset": 726,
+                            "length": 24
+                        }
+                    ],
+                    "views": null,
+                    "forwards": null,
+                    "replies": {
+                        "_": "MessageReplies",
+                        "replies": 0,
+                        "replies_pts": 471101,
+                        "comments": false,
+                        "recent_repliers": [],
+                        "channel_id": null,
+                        "max_id": null,
+                        "read_max_id": null
+                    },
+                    "edit_date": "2026-08-05T16:23:37+00:00",
+                    "post_author": null,
+                    "grouped_id": null,
+                    "reactions": {
+                        "_": "MessageReactions",
+                        "results": [],
+                        "min": false,
+                        "can_see_list": true,
+                        "reactions_as_tags": false,
+                        "recent_reactions": [],
+                        "top_reactors": []
+                    },
+                    "restriction_reason": [],
+                    "ttl_period": 86400,
+                    "quick_reply_shortcut_id": null,
+                    "effect": null,
+                    "factcheck": null,
+                    "report_delivery_until_date": null,
+                    "paid_message_stars": null,
+                    "suggested_post": null,
+                    "schedule_repeat_period": null,
+                    "summary_from_language": null,
+                    "rich_message": null
+                },
+                {
+                    "_": "Message",
+                    "id": 222647,
+                    "peer_id": {
+                        "_": "PeerChannel",
+                        "channel_id": 1298835751
+                    },
+                    "date": "2026-08-05T16:00:16+00:00",
+                    "message": "",
+                    "out": false,
+                    "mentioned": false,
+                    "media_unread": false,
+                    "silent": false,
+                    "post": false,
+                    "from_scheduled": false,
+                    "legacy": false,
+                    "edit_hide": false,
+                    "pinned": false,
+                    "noforwards": false,
+                    "invert_media": false,
+                    "offline": false,
+                    "video_processing_pending": false,
+                    "paid_suggested_post_stars": false,
+                    "paid_suggested_post_ton": false,
+                    "from_id": {
+                        "_": "PeerUser",
+                        "user_id": 7254329495
+                    },
+                    "from_boosts_applied": null,
+                    "from_rank": null,
+                    "saved_peer_id": null,
+                    "fwd_from": null,
+                    "via_bot_id": null,
+                    "via_business_bot_id": null,
+                    "guestchat_via_from": null,
+                    "reply_to": null,
+                    "media": {
+                        "_": "MessageMediaPhoto",
+                        "spoiler": false,
+                        "live_photo": false,
+                        "photo": {
+                            "_": "Photo",
+                            "id": 5161406669878136519,
+                            "access_hash": -2770670916087290633,
+                            "file_reference": "Ak1qqScAA2W3anNkGrbfj5m4E6tz3+FvcYudEog=",
+                            "date": "2026-08-05T16:00:16+00:00",
+                            "sizes": [
+                                {
+                                    "_": "PhotoStrippedSize",
+                                    "type": "i",
+                                    "bytes": "ASgX1VXIOaNsfrTjx0IB96Zl88Mg99v/ANekO4ODnAop65wCSCfUUUBcU5xwMn61HubdjaufTfRNuONhwfrTAr55kH/fVMRYHQZ4NFMj4HJyfrmigBFOAc0mVz95vzoopFWFYntRRRQB"
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "m",
+                                    "w": 180,
+                                    "h": 320,
+                                    "size": 16890
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "x",
+                                    "w": 450,
+                                    "h": 800,
+                                    "size": 73133
+                                },
+                                {
+                                    "_": "PhotoSizeProgressive",
+                                    "type": "y",
+                                    "w": 720,
+                                    "h": 1280,
+                                    "sizes": [
+                                        10868,
+                                        32298,
+                                        62828,
+                                        94942,
+                                        133041
+                                    ]
+                                }
+                            ],
+                            "dc_id": 1,
+                            "has_stickers": false,
+                            "video_sizes": []
+                        },
+                        "ttl_seconds": null,
+                        "video": null
+                    },
+                    "reply_markup": null,
+                    "entities": [],
+                    "views": null,
+                    "forwards": null,
+                    "replies": {
+                        "_": "MessageReplies",
+                        "replies": 0,
+                        "replies_pts": 471101,
+                        "comments": false,
+                        "recent_repliers": [],
+                        "channel_id": null,
+                        "max_id": null,
+                        "read_max_id": null
+                    },
+                    "edit_date": null,
+                    "post_author": null,
+                    "grouped_id": null,
+                    "reactions": null,
+                    "restriction_reason": [],
+                    "ttl_period": 86400,
+                    "quick_reply_shortcut_id": null,
+                    "effect": null,
+                    "factcheck": null,
+                    "report_delivery_until_date": null,
+                    "paid_message_stars": null,
+                    "suggested_post": null,
+                    "schedule_repeat_period": null,
+                    "summary_from_language": null,
+                    "rich_message": null
+                },
+                {
+                    "_": "Message",
+                    "id": 222646,
+                    "peer_id": {
+                        "_": "PeerChannel",
+                        "channel_id": 1298835751
+                    },
+                    "date": "2026-08-05T15:59:21+00:00",
+                    "message": "",
+                    "out": false,
+                    "mentioned": false,
+                    "media_unread": false,
+                    "silent": false,
+                    "post": false,
+                    "from_scheduled": false,
+                    "legacy": false,
+                    "edit_hide": false,
+                    "pinned": false,
+                    "noforwards": false,
+                    "invert_media": false,
+                    "offline": false,
+                    "video_processing_pending": false,
+                    "paid_suggested_post_stars": false,
+                    "paid_suggested_post_ton": false,
+                    "from_id": {
+                        "_": "PeerUser",
+                        "user_id": 6858997538
+                    },
+                    "from_boosts_applied": null,
+                    "from_rank": null,
+                    "saved_peer_id": null,
+                    "fwd_from": null,
+                    "via_bot_id": null,
+                    "via_business_bot_id": null,
+                    "guestchat_via_from": null,
+                    "reply_to": null,
+                    "media": {
+                        "_": "MessageMediaPhoto",
+                        "spoiler": false,
+                        "live_photo": false,
+                        "photo": {
+                            "_": "Photo",
+                            "id": 5159291793621847262,
+                            "access_hash": -3062225476649770325,
+                            "file_reference": "Ak1qqScAA2W2anNkGmDb1miEVDP5mPBM2i2fnzU=",
+                            "date": "2026-08-05T15:59:00+00:00",
+                            "sizes": [
+                                {
+                                    "_": "PhotoStrippedSize",
+                                    "type": "i",
+                                    "bytes": "ASgX1CeDjk01WY43LjjrmoRHMPvS7j6+XQYpOu8c/wCx/wDXoAsUVFHGyvkvx3G3FFADRagDh5D9Wp8UXlkkFjn1NPIGP/1Uzcmeo/MUAS0Ui9PaigDBLFzl5CT780uR/f8A0oooAQMY+Y5CD7cUUUUAfw=="
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "m",
+                                    "w": 180,
+                                    "h": 320,
+                                    "size": 18368
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "x",
+                                    "w": 450,
+                                    "h": 800,
+                                    "size": 72938
+                                },
+                                {
+                                    "_": "PhotoSize",
+                                    "type": "y",
+                                    "w": 720,
+                                    "h": 1280,
+                                    "size": 143421
+                                },
+                                {
+                                    "_": "PhotoSizeProgressive",
+                                    "type": "w",
+                                    "w": 900,
+                                    "h": 1600,
+                                    "sizes": [
+                                        17060,
+                                        41796,
+                                        74569,
+                                        109171,
+                                        193337
+                                    ]
+                                }
+                            ],
+                            "dc_id": 1,
+                            "has_stickers": false,
+                            "video_sizes": []
+                        },
+                        "ttl_seconds": null,
+                        "video": null
+                    },
+                    "reply_markup": null,
+                    "entities": [],
+                    "views": null,
+                    "forwards": null,
+                    "replies": {
+                        "_": "MessageReplies",
+                        "replies": 0,
+                        "replies_pts": 471101,
+                        "comments": false,
+                        "recent_repliers": [],
+                        "channel_id": null,
+                        "max_id": null,
+                        "read_max_id": null
+                    },
+                    "edit_date": null,
+                    "post_author": null,
+                    "grouped_id": null,
+                    "reactions": null,
+                    "restriction_reason": [],
+                    "ttl_period": 86400,
+                    "quick_reply_shortcut_id": null,
+                    "effect": null,
+                    "factcheck": null,
+                    "report_delivery_until_date": null,
+                    "paid_message_stars": null,
+                    "suggested_post": null,
+                    "schedule_repeat_period": null,
+                    "summary_from_language": null,
+                    "rich_message": null
+                }
+            ]
+        }

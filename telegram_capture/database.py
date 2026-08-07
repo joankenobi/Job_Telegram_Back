@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS messages (
     published       INTEGER DEFAULT 0,
     published_at    TEXT,
     published_link  TEXT,
+    email TEXT,
+    phone_number TEXT,
     UNIQUE(channel_id, message_id)
 );
 CREATE INDEX IF NOT EXISTS idx_channel_msg ON messages(channel_id, message_id);
@@ -43,11 +45,23 @@ class Database:
         await self._conn.commit()
         await self.ensure_vision_columns()
         await self.ensure_publish_columns()
+        await self.ensure_contact_columns()
 
     async def ensure_vision_columns(self):
         for col_sql in [
             "ALTER TABLE messages ADD COLUMN image_text TEXT",
             "ALTER TABLE messages ADD COLUMN ollama_error TEXT",
+        ]:
+            try:
+                await self._conn.execute(col_sql)
+                await self._conn.commit()
+            except aiosqlite.OperationalError:
+                pass
+
+    async def ensure_contact_columns(self):
+        for col_sql in [
+            "ALTER TABLE messages ADD COLUMN email TEXT",
+            "ALTER TABLE messages ADD COLUMN phone_number TEXT",
         ]:
             try:
                 await self._conn.execute(col_sql)
@@ -139,6 +153,22 @@ class Database:
             "UPDATE messages SET image_text = ?, ollama_error = ? "
             "WHERE channel_id = ? AND message_id = ?",
             (image_text, ollama_error, channel_id, message_id),
+        )
+        await self._conn.commit()
+
+    async def update_info_contact(
+        self,
+        channel_id: str,
+        message_id: int,
+        phone_number: str | None,
+        email: str | None,
+    ):
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        await self._conn.execute(
+            "UPDATE messages SET phone_number = ?, email = ?"
+            "WHERE channel_id = ? AND message_id = ?",
+            (phone_number, email, channel_id, message_id),
         )
         await self._conn.commit()
 

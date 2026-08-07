@@ -27,6 +27,8 @@ class Message:
     published: bool = False
     published_at: str | None = None
     published_link: str | None = None
+    email: str | None = None
+    phone_number: str | None = None
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -67,9 +69,11 @@ class Message:
             captured_at=row[10],
             image_text=row[11],
             ollama_error=row[12],
-            published=bool(row[13]) if len(row) > 13 and row[13] is not None else False,
-            published_at=row[14] if len(row) > 14 else None,
-            published_link=row[15] if len(row) > 15 else None,
+            email=row[16],
+            phone_number=row[17],
+            published=bool(row[15]) if len(row) > 15 and row[15] is not None else False,
+            published_at=row[16] if len(row) > 16 else None,
+            published_link=row[17] if len(row) > 17 else None
         )
 
     def to_json(self) -> str:

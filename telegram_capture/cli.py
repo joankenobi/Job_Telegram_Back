@@ -26,7 +26,9 @@ async def run(args):
         client = await connect_client()
         try:
             me = await client.get_me()
-            print(f"Logged in as: {me.first_name} {me.last_name or ''} (@{me.username})")
+            print(
+                f"Logged in as: {me.first_name} {me.last_name or ''} (@{me.username})"
+            )
         except Exception:
             print("Warning: Could not retrieve account info")
 
@@ -35,14 +37,16 @@ async def run(args):
             print("-" * 60)
             dialogs = await client.list_dialogs(limit=100)
             for dtype, title, username, eid in dialogs:
-                if dtype in ('Channel', 'Chat'):
+                if dtype in ("Channel", "Chat"):
                     link = f"@{username}" if username else f"ID: {eid}"
                     print(f"  [{dtype}] {title} ({link})")
             print("-" * 60)
             return
 
         if not args.channel:
-            print("Error: --channel is required (or use --list-channels to see your channels)")
+            print(
+                "Error: --channel is required (or use --list-channels to see your channels)"
+            )
             sys.exit(1)
 
         captured, skipped = await capture_channel(
@@ -55,13 +59,22 @@ async def run(args):
         )
 
         total = await db.get_message_count()
-        print(f"\nDone. Captured: {captured} | Skipped (duplicates): {skipped} | Total in DB: {total}")
+        print(
+            f"\nDone. Captured: {captured} | Skipped (duplicates): {skipped} | Total in DB: {total}"
+        )
     finally:
         await disconnect_client()
         await close_database()
 
 
 async def extract_image_text(args):
+
+    # Teléfonos: soporta +58, 0412-, (0212), con espacios, puntos o guiones
+    PHONE_PATTERN = r"(?:\+?\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?)?\d{3,4}[\s.-]?\d{3,4}[\s.-]?\d{3,4}"
+
+    # Correos: el clásico, suficiente para la mayoría de casos
+    EMAIL_PATTERN = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
+
     if not args.channel:
         print("Error: --extract-image-text requires --channel")
         sys.exit(1)
@@ -69,9 +82,15 @@ async def extract_image_text(args):
     print("Checking Ollama status...")
     if not await is_ollama_running():
         print("Ollama is not running at http://localhost:11434")
-        response = input("Start Ollama now? Open a terminal and run: ollama serve  [Y/n]: ").strip().lower()
+        response = (
+            input("Start Ollama now? Open a terminal and run: ollama serve  [Y/n]: ")
+            .strip()
+            .lower()
+        )
         if response in ("", "y", "yes"):
-            print("Please start Ollama in another terminal, then run this command again.")
+            print(
+                "Please start Ollama in another terminal, then run this command again."
+            )
         else:
             print("Aborted.")
         sys.exit(0)
@@ -94,21 +113,43 @@ async def extract_image_text(args):
             print(f"Processing all {len(messages)}.")
 
         for i, msg in enumerate(messages, 1):
-            text_preview = msg.media_path.split("/")[-1] if msg.media_path else msg.message_id
-            print(f"\n[{i}/{len(messages)}] Processing message {msg.message_id} ({text_preview})...")
+            text_preview = (
+                msg.media_path.split("/")[-1] if msg.media_path else msg.message_id
+            )
+            print(
+                f"\n[{i}/{len(messages)}] Processing message {msg.message_id} ({text_preview})..."
+            )
 
             extracted_text, error = await extract_text_from_image(msg.media_path)
+            # print(extracted_text)
+
+            phone_numbers = []
+            emails = []
+            if extracted_text:
+                phone_numbers = re.findall(PHONE_PATTERN, extracted_text)
+                emails = re.findall(EMAIL_PATTERN, extracted_text)
+
+            firstItemListExist = lambda x : x[0] if x.__len__() > 0 else None
 
             if error:
                 print(f"  [ERROR] {error}")
                 failed += 1
             else:
-                preview = extracted_text[:80].replace("\n", " ") if extracted_text else ""
+                preview = (
+                    extracted_text[:80].replace("\n", " ") if extracted_text else ""
+                )
                 print(f"  [OK] {preview}...")
+                print(f" Teléfonos: {phone_numbers}")
+                print(f" Teléfonos: { firstItemListExist(phone_numbers)}")
+                print(f" Correos:   {emails}")
+                print(f" Correos:   { firstItemListExist(emails)}")
                 processed += 1
 
             await db.update_image_text(
                 msg.channel_id, msg.message_id, extracted_text, error
+            )
+            await db.update_info_contact(
+                msg.channel_id, msg.message_id, firstItemListExist(phone_numbers), firstItemListExist(emails)
             )
 
         print(f"\nDone. Processed: {processed} | Failed: {failed}")
@@ -205,10 +246,12 @@ def main():
     args = parser.parse_args()
 
     if args.month:
-        if not re.match(r'^\d{2}-\d{4}$', args.month):
-            print(f"Error: --month must be in MM-YYYY format (e.g. 07-2026), got: '{args.month}'")
+        if not re.match(r"^\d{2}-\d{4}$", args.month):
+            print(
+                f"Error: --month must be in MM-YYYY format (e.g. 07-2026), got: '{args.month}'"
+            )
             sys.exit(1)
-        month_num = int(args.month.split('-')[0])
+        month_num = int(args.month.split("-")[0])
         if month_num < 1 or month_num > 12:
             print(f"Error: --month month number must be 01-12, got: {month_num}")
             sys.exit(1)
