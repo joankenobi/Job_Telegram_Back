@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS messages (
     published_link  TEXT,
     email TEXT,
     phone_number TEXT,
+    location TEXT,
+    profession TEXT,
     UNIQUE(channel_id, message_id)
 );
 CREATE INDEX IF NOT EXISTS idx_channel_msg ON messages(channel_id, message_id);
@@ -62,6 +64,8 @@ class Database:
         for col_sql in [
             "ALTER TABLE messages ADD COLUMN email TEXT",
             "ALTER TABLE messages ADD COLUMN phone_number TEXT",
+            "ALTER TABLE messages ADD COLUMN location TEXT",
+            "ALTER TABLE messages ADD COLUMN profession TEXT",
         ]:
             try:
                 await self._conn.execute(col_sql)
@@ -172,6 +176,22 @@ class Database:
         )
         await self._conn.commit()
 
+    async def update_profession_location(
+        self,
+        channel_id: str,
+        message_id: int,
+        profession: str | None,
+        location: str | None,
+    ):
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        await self._conn.execute(
+            "UPDATE messages SET profession = ?, location = ?"
+            "WHERE channel_id = ? AND message_id = ?",
+            (profession, location, channel_id, message_id),
+        )
+        await self._conn.commit()
+
     async def get_pending_images(
         self, channel_id: str, limit: int | None = None
     ) -> list[Message]:
@@ -198,6 +218,18 @@ class Database:
             "SELECT COUNT(*) FROM messages WHERE channel_id = ? "
             "AND media_type = 'image' "
             "AND (image_text IS NULL OR image_text = '')",
+            (channel_id,),
+        )
+        row = await cursor.fetchone()
+        return row[0] if row else 0
+    
+    async def get_pending_text_location_profession_count(self, channel_id: str) -> int:
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        cursor = await self._conn.execute(
+            "SELECT COUNT(*) FROM messages WHERE channel_id = ? "
+            "AND media_type = 'image' "
+            "AND (location IS NULL OR profession = '')",
             (channel_id,),
         )
         row = await cursor.fetchone()

@@ -66,6 +66,7 @@ ollama serve
 ```bash
 .\venv\Scripts\python.exe run.py --channel "@rrhh_Venezuela"
 .\venv\Scripts\python.exe run.py --channel "@puveb"
+.\venv\Scripts\python.exe run.py --channel "@TRABAJOYPUBLICIDAD2018" --extract-image-text
 ```
 
 ```bash

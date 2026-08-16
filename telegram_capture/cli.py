@@ -8,7 +8,7 @@ import platform
 from .client import connect_client, disconnect_client
 from .database import get_database, close_database
 from .capture import capture_channel
-from .vision import is_ollama_running, extract_text_from_image
+from .vision import is_ollama_running, extract_all_text_from_image, extract_contact_info_text
 from .publisher import publish_messages
 
 
@@ -119,15 +119,21 @@ async def extract_image_text(args):
             print(
                 f"\n[{i}/{len(messages)}] Processing message {msg.message_id} ({text_preview})..."
             )
+            while True:
+                extracted_text, error = await extract_all_text_from_image(msg.media_path)
 
-            extracted_text, error = await extract_text_from_image(msg.media_path)
-            # print(extracted_text)
-
+                if extracted_text is None:
+                    print("extracted_text is none")
+                
+                if extracted_text is not None:
+                    break
+                
             phone_numbers = []
             emails = []
             if extracted_text:
-                phone_numbers = re.findall(PHONE_PATTERN, extracted_text)
-                emails = re.findall(EMAIL_PATTERN, extracted_text)
+                phone_numbers = re.findall(PHONE_PATTERN, extracted_text['imagen_text'])
+                emails = re.findall(EMAIL_PATTERN, extracted_text['imagen_text'])
+                print(f" extracted_text: {extracted_text}")
 
             firstItemListExist = lambda x : x[0] if x.__len__() > 0 else None
 
@@ -136,20 +142,23 @@ async def extract_image_text(args):
                 failed += 1
             else:
                 preview = (
-                    extracted_text[:80].replace("\n", " ") if extracted_text else ""
+                    extracted_text['imagen_text'][:80].replace("\n", " ") if extracted_text else ""
                 )
                 print(f"  [OK] {preview}...")
+                print(f" extracted_text: {extracted_text}")
                 print(f" Teléfonos: {phone_numbers}")
-                print(f" Teléfonos: { firstItemListExist(phone_numbers)}")
                 print(f" Correos:   {emails}")
-                print(f" Correos:   { firstItemListExist(emails)}")
+                print(f" message_id:   { msg.message_id}")
                 processed += 1
 
-            await db.update_image_text(
-                msg.channel_id, msg.message_id, extracted_text, error
-            )
             await db.update_info_contact(
                 msg.channel_id, msg.message_id, firstItemListExist(phone_numbers), firstItemListExist(emails)
+            )
+            await db.update_profession_location(
+                msg.channel_id, msg.message_id, extracted_text["professions"], extracted_text["locations"]
+            )
+            await db.update_image_text(
+                msg.channel_id, msg.message_id, extracted_text['imagen_text'], error
             )
 
         print(f"\nDone. Processed: {processed} | Failed: {failed}")
