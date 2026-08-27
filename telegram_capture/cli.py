@@ -10,6 +10,7 @@ from .database import get_database, close_database
 from .capture import capture_channel
 from .vision import is_ollama_running, extract_all_text_from_image, extract_contact_info_text
 from .publisher import publish_messages
+from .text_to_imagen import message_text_to_image
 
 
 async def run(args):
@@ -19,6 +20,14 @@ async def run(args):
 
     if args.publish:
         await publish_posts(args)
+        return
+
+    if args.classify_by_location:
+        await classify_by_location(args)
+        return
+
+    if args.text_to_img:
+        await message_text_to_image(args)
         return
 
     db = await get_database()
@@ -194,6 +203,44 @@ async def publish_posts(args):
     finally:
         await close_database()
 
+async def classify_by_location(args):
+    from .media import classify_media_by_location
+    from .config import DOWNLOADS_DIR
+
+    db = await get_database()
+    try:
+        if args.channel:
+            # Single channel
+            print(f"Classifying media for channel: {args.channel}")
+            messages_with_loc = await db.get_messages_with_location(args.channel, limit=args.limit)
+            messages_without_loc = await db.get_messages_without_location(args.channel, limit=args.limit)
+            all_messages = messages_with_loc + messages_without_loc
+        else:
+            # All channels - get all messages with media
+            print("Classifying media for all channels...")
+            all_messages = await db.get_all_media_messages(limit=args.limit)
+
+        if not all_messages:
+            print("No media messages found to classify.")
+            return
+
+        print(f"Found {len(all_messages)} media message(s) to classify.")
+        
+        results = await classify_media_by_location(all_messages, DOWNLOADS_DIR)
+        
+        total_copied = 0
+        total_failed = 0
+        for location, items in results.items():
+            copied = sum(1 for _, success, _ in items if success)
+            failed = sum(1 for _, success, _ in items if not success)
+            total_copied += copied
+            total_failed += failed
+            print(f"  {location}: {copied} copied, {failed} failed")
+
+        print(f"\nDone. Total copied: {total_copied} | Total failed: {total_failed}")
+    finally:
+        await close_database()
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -250,6 +297,16 @@ def main():
         "--no-image",
         action="store_true",
         help="Send text only (no image) even for image posts",
+    )
+    parser.add_argument(
+        "--classify-by-location",
+        action="store_true",
+        help="Classify and copy media files into location-based folders within downloads",
+    )
+    parser.add_argument(
+        "--text-to-img",
+        action="store_true",
+        help="Create images from messages text",
     )
 
     args = parser.parse_args()

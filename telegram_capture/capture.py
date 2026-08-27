@@ -68,7 +68,7 @@ async def capture_channel(
         entity, limit=iter_limit
     ):
         telethon_message: TelethonMessage
-        print(telethon_message.to_json())
+        print(f"el mensaje: {telethon_message.to_json()}")
         if telethon_message.date < start_date:
             if not month and telethon_message.date < start_date - timedelta(days=7):
                 break

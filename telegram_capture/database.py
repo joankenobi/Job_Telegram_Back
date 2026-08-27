@@ -195,6 +195,9 @@ class Database:
     async def get_pending_images(
         self, channel_id: str, limit: int | None = None
     ) -> list[Message]:
+        """
+            Return the pending images to extract the text. 
+        """
         if not self._conn:
             raise RuntimeError("Database not connected")
         query = (
@@ -209,6 +212,28 @@ class Database:
             params.append(limit)
         cursor = await self._conn.execute(query, params)
         rows = await cursor.fetchall()
+        return [Message.from_row(row) for row in rows]
+
+    async def get_only_text_messages(
+        self, channel_id: str, limit: int | None = None
+    ) -> list[Message]:
+
+        if not self._conn:
+            raise RuntimeError("Database not conneted")
+
+        query=(
+            "SELECT * FROM messages WHERE channel_is = ? "
+            "AND media_type NOT IN ('image','video')"
+            "AND message_text IS NOT NULL"
+            "ORDER BY date ASC"
+            "AND date(captured_at) = date('now')"
+        )
+        params: list =[channel_id]
+        if limit is not None:
+            query += "LIMIT ?"
+            params.append(limit)
+        cursor= await self._conn.execute(query,params)
+        rows= cursor.fetchall()
         return [Message.from_row(row) for row in rows]
 
     async def get_pending_images_count(self, channel_id: str) -> int:
@@ -316,6 +341,91 @@ class Database:
             (published_link, published_at, channel_id, message_id),
         )
         await self._conn.commit()
+
+    async def get_messages_with_location(
+        self, channel_id: str | None = None, limit: int | None = None
+    ) -> list[Message]:
+        """Get messages that have media (image/video) and a location set, captured today."""
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        
+        query = (
+            "SELECT * FROM messages "
+            "WHERE media_type IN ('image', 'video') "
+            "AND location IS NOT NULL "
+            "AND location != '' "
+            "AND location != 'None' "
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
+            "AND (email != '' OR phone_number != '')"
+            "AND (email != 'None' OR phone_number != 'None')"
+            "AND date(captured_at) = date('now') "
+        )
+        params: list = []
+        if channel_id:
+            query += "AND channel_id = ? "
+            params.append(channel_id)
+        query += "ORDER BY date DESC"
+        if limit:
+            query += " LIMIT ?"
+            params.append(limit)
+        
+        cursor = await self._conn.execute(query, params)
+        rows = await cursor.fetchall()
+        return [Message.from_row(row) for row in rows]
+
+    async def get_messages_without_location(
+        self, channel_id: str | None = None, limit: int | None = None
+    ) -> list[Message]:
+        """Get messages that have media (image/video) but NO location set, captured today."""
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        
+        query = (
+            "SELECT * FROM messages "
+            "WHERE media_type IN ('image', 'video') "
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
+            "AND (email != '' OR phone_number != '')"
+            "AND (email != 'None' OR phone_number != 'None')"
+            "AND (location IS NULL OR location = '' OR location = 'None') "
+            "AND date(captured_at) = date('now') "
+        )
+        params: list = []
+        if channel_id:
+            query += "AND channel_id = ? "
+            params.append(channel_id)
+        query += "ORDER BY date DESC"
+        if limit:
+            query += " LIMIT ?"
+            params.append(limit)
+        
+        cursor = await self._conn.execute(query, params)
+        rows = await cursor.fetchall()
+        return [Message.from_row(row) for row in rows]
+
+    async def get_all_media_messages(
+        self, limit: int | None = None
+    ) -> list[Message]:
+        """Get all messages that have media (image/video) from all channels, captured today."""
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        
+        query = (
+            "SELECT * FROM messages "
+            "WHERE media_type IN ('image', 'video') "
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
+            "AND (email != '' OR phone_number != '')"
+            "AND (email != 'None' OR phone_number != 'None')"
+            "AND date(captured_at) = date('now') "
+            "ORDER BY date DESC"
+        )
+        params: list = []
+        if limit:
+            query += " LIMIT ?"
+            params.append(limit)
+        
+        cursor = await self._conn.execute(query, params)
+        rows = await cursor.fetchall()
+        return [Message.from_row(row) for row in rows]
 
 
 _db_instance: Database | None = None

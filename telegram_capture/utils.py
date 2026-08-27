@@ -52,3 +52,12 @@ def parse_llm_json(content: str) -> dict:
     except Exception as e:
         print(e)
         raise e
+
+def is_arabic(text: str, threshold: float = 0.1) -> bool:
+    """Retorna True si el texto contiene caracteres del bloque Unicode árabe."""
+    if not text:
+        return False
+
+    arabic_chars = sum(1 for char in text if '\u0600' <= char <= '\u06ff')
+    # Si más del 10% de los caracteres son árabes, lo consideramos texto en árabe
+    return (arabic_chars / len(text)) > threshold
