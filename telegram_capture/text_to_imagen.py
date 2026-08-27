@@ -2,11 +2,12 @@ import textwrap
 import arabic_reshaper
 from bidi.algorithm import get_display
 from PIL import Image, ImageDraw, ImageFont
-from .utils import is_arabic
 import sys
+from .utils import is_arabic
 from .database import get_database, close_database
 from .models import Message
 from .media import get_folder_for_message
+from types import SimpleNamespace
 
 def reshape_arabic(text: str) -> str:
     return get_display(arabic_reshaper.reshape(text))
@@ -15,19 +16,22 @@ def reshape_arabic(text: str) -> str:
 async def message_text_to_image(
     args
 ):
+    try:
+        if not args.channel:
+            print("Error: --text_to_img requires --channel")
+            sys.exit(1)
 
-    if not args.channels:
-        print("Error: --text_to_img requires --channel")
-        sys.exit(1)
+        db = await get_database()
 
-    db = await get_database()
+        rows: list[Message]= await db.get_only_text_messages(args.channel,args.limit)
 
-    rows: list[Message]= await db.get_only_text_messages(args.channels,args.limit)
-
-    for row in rows:
-        path = get_folder_for_message(message=row)
-        create_job_post(row.message_text, path)
-    close_database()
+        for row in rows:
+            path = await get_folder_for_message(message=row)
+            create_job_post(row.message_text, path)
+        await close_database()
+    finally:
+        await close_database()
+        sys.exit()
 
 def create_job_post(
     message_text: str, output_path: str, lang: str = "auto"
@@ -93,5 +97,8 @@ def create_job_post(
 
     image.save(output_path + ".jpg")
 
+
 if __name__ == "__main__":
-    message_text_to_image()
+    arg = SimpleNamespace(channel="@jobmag", limit=10)
+    import asyncio
+    asyncio.run(message_text_to_image(arg))

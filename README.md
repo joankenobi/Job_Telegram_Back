@@ -67,6 +67,8 @@ ollama serve
 .\venv\Scripts\python.exe run.py --channel "@rrhh_Venezuela"
 .\venv\Scripts\python.exe run.py --channel "@puveb"
 .\venv\Scripts\python.exe run.py --channel "@TRABAJOYPUBLICIDAD2018" --extract-image-text
+.\venv\Scripts\python.exe run.py --channel "@jobmag" --filter-mode with_message_text
+.\venv\Scripts\python.exe run.py --channel "@jobmag" --text-to-img
 .\venv\Scripts\python.exe run.py --classify-by-location --channel "@rrhh_Venezuela"
 ```
 

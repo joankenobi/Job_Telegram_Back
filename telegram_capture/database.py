@@ -217,24 +217,27 @@ class Database:
     async def get_only_text_messages(
         self, channel_id: str, limit: int | None = None
     ) -> list[Message]:
+        try:
+            if not self._conn:
+                raise RuntimeError("Database not conneted")
 
-        if not self._conn:
-            raise RuntimeError("Database not conneted")
+            query=(
+                "SELECT * FROM messages WHERE channel_id = ? "
+                "AND media_type NOT IN ('image','video') "
+                "AND message_text IS NOT NULL "
+                "AND date(captured_at) = date('now') "
+                "ORDER BY date ASC "
+            )
+            params: list =[channel_id]
+            if limit is not None:
+                query += "LIMIT ?"
+                params.append(limit)
+            cursor= await self._conn.execute(query,params)
+            rows= await cursor.fetchall()
+            return [Message.from_row(row) for row in rows]
+        finally:
+            await close_database()
 
-        query=(
-            "SELECT * FROM messages WHERE channel_is = ? "
-            "AND media_type NOT IN ('image','video')"
-            "AND message_text IS NOT NULL"
-            "ORDER BY date ASC"
-            "AND date(captured_at) = date('now')"
-        )
-        params: list =[channel_id]
-        if limit is not None:
-            query += "LIMIT ?"
-            params.append(limit)
-        cursor= await self._conn.execute(query,params)
-        rows= cursor.fetchall()
-        return [Message.from_row(row) for row in rows]
 
     async def get_pending_images_count(self, channel_id: str) -> int:
         if not self._conn:

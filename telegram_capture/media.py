@@ -94,7 +94,7 @@ async def get_folder_for_message(message:Message) -> str:
         folder = get_channel_folder(message.channel_id, message.channel_title)
         date_folder = folder / date_str
         date_folder.mkdir(parents=True, exist_ok=True)
-        file_name = f"{message.id}_{date_str}"
+        file_name = f"{message.message_id}_{date_str}"
         file_path = date_folder / file_name
     
         if date_folder.exists():
