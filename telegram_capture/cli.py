@@ -11,6 +11,7 @@ from .capture import capture_channel
 from .vision import is_ollama_running, extract_all_text_from_image, extract_contact_info_text
 from .publisher import publish_messages
 from .text_to_imagen import message_text_to_image
+from .media import create_not_classifycated_files
 
 
 async def run(args):
@@ -79,7 +80,7 @@ async def run(args):
 async def extract_image_text(args):
 
     # Teléfonos: soporta +58, 0412-, (0212), con espacios, puntos o guiones
-    PHONE_PATTERN = r"(?:\+?\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?)?\d{3,4}[\s.-]?\d{3,4}[\s.-]?\d{3,4}"
+    PHONE_PATTERN = r"(?:\+?\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d{2,4}[\s.-]?\d{2,4}[\s.-]?\d{2,4}"
 
     # Correos: el clásico, suficiente para la mayoría de casos
     EMAIL_PATTERN = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
@@ -227,6 +228,8 @@ async def classify_by_location(args):
         print(f"Found {len(all_messages)} media message(s) to classify.")
         
         results = await classify_media_by_location(all_messages, DOWNLOADS_DIR)
+        if args.channel:
+           await create_not_classifycated_files(args.channel)
         
         total_copied = 0
         total_failed = 0

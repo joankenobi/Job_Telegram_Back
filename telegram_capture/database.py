@@ -438,9 +438,6 @@ class Database:
         cursor2 = await self._conn.execute("SELECT date('now'), datetime('now'), date('now', '-4 hours'), datetime('now', '-4 hours')")
         rows2 = await cursor2.fetchone()
 
-        print(Message.from_row(rows[0]).__str__())
-
-        # print(f"{rows[0].__str__() if rows[0] else True}")
         print(f"{rows2.__str__()}")
 
         return [Message.from_row(row) for row in rows]

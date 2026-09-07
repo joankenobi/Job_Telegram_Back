@@ -115,13 +115,13 @@ def get_primary_location(location: str | None) -> str:
     return primary if primary else "no_location"
 
 
-def get_location_folder(base_folder: Path, location: str) -> Path:
+def get_location_folder(base_folder: Path, location: str, channel: str) -> Path:
     """Get the folder path for a specific location within the base folder."""
     # Sanitize location name for filesystem
     safe_location = "".join(c for c in location if c.isalnum() or c in (" ", "-", "_")).strip()
     safe_location = safe_location.replace(" ", "_")
     # return base_folder / Path("locations") / safe_location
-    return base_folder / Path("locations")
+    return base_folder / Path("locations") / channel.lstrip("@")
 
 
 async def copy_media_to_location_folder(
@@ -138,7 +138,7 @@ async def copy_media_to_location_folder(
         return False, f"Source file not found: {src_path}"
     
     primary_location = get_primary_location(message.location)
-    location_folder = get_location_folder(base_folder, primary_location)
+    location_folder = get_location_folder(base_folder, primary_location, message.channel_id)
     location_folder.mkdir(parents=True, exist_ok=True)
     
     dest_path = location_folder / src_path.name
@@ -179,3 +179,47 @@ async def classify_media_by_location(
         results[primary_location].append((message, success, result))
     
     return results
+
+def list_files(folder: str | Path, pattern: str = "*") -> list[Path]:
+    path = Path(folder)
+    if not path.exists():
+        return []
+    return list(path.glob(pattern))
+
+def get_unique_files_list_in_two_files(list_a:list[Path], list_b:list[Path]) -> list[str]:
+    set_a = set([f.name for f in list_a])
+    set_b = set([f.name for f in list_b])
+
+    print(set_a)
+
+    print("/n/n")
+
+    print(set_b)
+
+    return list(set_a ^ set_b)
+
+async def create_not_classifycated_files(channel:str, compare_folder="locations"):
+    try:
+        channel_folder = get_channel_folder(channel,None)
+        compare_folder = DOWNLOADS_DIR / compare_folder / channel.lstrip("@")
+
+        list_a = list_files(channel_folder, "**/*.jpg")
+        list_b = list_files(compare_folder, "**/*.jpg")
+
+        unique_list = get_unique_files_list_in_two_files(list_a, list_b)
+
+        dest_path = DOWNLOADS_DIR / "unclassify" / channel
+
+        dest_path.mkdir(parents=True, exist_ok=True)
+
+        for file in list_a:
+            if file.name in unique_list:
+                shutil.copy2(file, dest_path)
+
+    finally:
+        print("unclassify foles created")
+
+if __name__ == "__main__":
+    asyncio.run(
+     create_not_classifycated_files("@rrhh_Venezuela")
+    )
