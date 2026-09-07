@@ -358,22 +358,28 @@ class Database:
             "AND location IS NOT NULL "
             "AND location != '' "
             "AND location != 'None' "
-            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
-            "AND (email != '' OR phone_number != '')"
-            "AND (email != 'None' OR phone_number != 'None')"
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL) "
+            "AND (email != '' OR phone_number != '') "
+            "AND (email != 'None' OR phone_number != 'None') "
             "AND date(captured_at) = date('now') "
         )
         params: list = []
         if channel_id:
             query += "AND channel_id = ? "
             params.append(channel_id)
-        query += "ORDER BY date DESC"
+        query += "ORDER BY date DESC "
         if limit:
-            query += " LIMIT ?"
+            query += "LIMIT ?"
             params.append(limit)
         
         cursor = await self._conn.execute(query, params)
         rows = await cursor.fetchall()
+
+        cursor2 = await self._conn.execute("SELECT date('now'), date('now', '-4 hours')")
+        rows2 = await cursor2.fetchone()
+
+        print(f"{rows2.__str__()}")
+
         return [Message.from_row(row) for row in rows]
 
     async def get_messages_without_location(
@@ -386,9 +392,9 @@ class Database:
         query = (
             "SELECT * FROM messages "
             "WHERE media_type IN ('image', 'video') "
-            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
-            "AND (email != '' OR phone_number != '')"
-            "AND (email != 'None' OR phone_number != 'None')"
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL) "
+            "AND (email != '' OR phone_number != '') "
+            "AND (email != 'None' OR phone_number != 'None') "
             "AND (location IS NULL OR location = '' OR location = 'None') "
             "AND date(captured_at) = date('now') "
         )
@@ -396,9 +402,9 @@ class Database:
         if channel_id:
             query += "AND channel_id = ? "
             params.append(channel_id)
-        query += "ORDER BY date DESC"
+        query += "ORDER BY date DESC "
         if limit:
-            query += " LIMIT ?"
+            query += "LIMIT ?"
             params.append(limit)
         
         cursor = await self._conn.execute(query, params)
@@ -415,9 +421,9 @@ class Database:
         query = (
             "SELECT * FROM messages "
             "WHERE media_type IN ('image', 'video') "
-            "AND (email IS NOT NULL OR phone_number IS NOT NULL)"
-            "AND (email != '' OR phone_number != '')"
-            "AND (email != 'None' OR phone_number != 'None')"
+            "AND (email IS NOT NULL OR phone_number IS NOT NULL) "
+            "AND (email != '' OR phone_number != '') "
+            "AND (email != 'None' OR phone_number != 'None') "
             "AND date(captured_at) = date('now') "
             "ORDER BY date DESC"
         )
@@ -428,6 +434,15 @@ class Database:
         
         cursor = await self._conn.execute(query, params)
         rows = await cursor.fetchall()
+
+        cursor2 = await self._conn.execute("SELECT date('now'), datetime('now'), date('now', '-4 hours'), datetime('now', '-4 hours')")
+        rows2 = await cursor2.fetchone()
+
+        print(Message.from_row(rows[0]).__str__())
+
+        # print(f"{rows[0].__str__() if rows[0] else True}")
+        print(f"{rows2.__str__()}")
+
         return [Message.from_row(row) for row in rows]
 
 

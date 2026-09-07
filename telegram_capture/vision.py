@@ -135,7 +135,7 @@ async def extract_text_from_image(image_path: str) -> tuple[str | None, str | No
     except Exception as e:
         return None, str(e)
 
-async def extract_all_text_from_image(image_path: str) -> tuple[str | None, str | None]:
+async def extract_all_text_from_image(image_path: str) -> tuple[dict | None, str | None]:
     try:
         b64 = encode_image_base64(image_path)
         payload2 = {
@@ -176,7 +176,11 @@ async def extract_all_text_from_image(image_path: str) -> tuple[str | None, str 
     except httpx.HTTPStatusError as e:
         return None, f"HTTP {e.response.status_code}: {e.response.text}"
     except FileNotFoundError:
-        return "No such file or directory: " + image_path, None
+        extracted_text = dict()
+        extracted_text["imagen_text"] = "No such file or directory: " + image_path
+        extracted_text["professions"] = None
+        extracted_text["locations"] = None
+        return  extracted_text, None
     except Exception as e:
         return None, str(e)
     

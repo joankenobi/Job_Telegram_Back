@@ -142,7 +142,6 @@ async def copy_media_to_location_folder(
     location_folder.mkdir(parents=True, exist_ok=True)
     
     dest_path = location_folder / src_path.name
-    print("el primero de : " + dest_path.__str__())
     
     # Avoid overwriting - add suffix if file exists
     counter = 1
@@ -152,7 +151,6 @@ async def copy_media_to_location_folder(
         suffix = original_dest.suffix
         dest_path = location_folder / f"{stem}_{counter}{suffix}"
         counter += 1
-        print("uno más de: " + dest_path.__str__())
     
     try:
         shutil.copy2(src_path, dest_path)
