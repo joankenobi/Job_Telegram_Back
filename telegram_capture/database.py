@@ -251,17 +251,40 @@ class Database:
         row = await cursor.fetchone()
         return row[0] if row else 0
     
-    async def get_pending_text_location_profession_count(self, channel_id: str) -> int:
+    async def get_pending_for_extract_location_profession_count(self, channel_id: str) -> int:
         if not self._conn:
             raise RuntimeError("Database not connected")
         cursor = await self._conn.execute(
             "SELECT COUNT(*) FROM messages WHERE channel_id = ? "
-            "AND media_type = 'image' "
+            "AND (message_text IS NOT NULL OR message_text != '')"
+            "AND (image_text IS NULL OR image_text = '') "
             "AND (location IS NULL OR profession = '')",
             (channel_id,),
         )
         row = await cursor.fetchone()
         return row[0] if row else 0
+
+    async def get_pending_for_extract_location_profession(self, channel_id: str, limit: int | None = None
+    ) -> list[Message]:
+        """
+            Return the pending images to extract the text. 
+        """
+        if not self._conn:
+            raise RuntimeError("Database not connected")
+        query = (
+            "SELECT * FROM messages WHERE channel_id = ? "
+            "AND (message_text IS NOT NULL OR message_text != '')"
+            "AND (image_text IS NULL OR image_text = '') "
+            "AND (location IS NULL OR profession = '')"
+            "ORDER BY date ASC"
+        )
+        params: list = [channel_id]
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
+        cursor = await self._conn.execute(query, params)
+        rows = await cursor.fetchall()
+        return [Message.from_row(row) for row in rows]
 
     async def get_unpublished_by_source(
         self,

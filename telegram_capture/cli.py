@@ -8,15 +8,25 @@ import platform
 from .client import connect_client, disconnect_client
 from .database import get_database, close_database
 from .capture import capture_channel
-from .vision import is_ollama_running, extract_all_text_from_image, extract_contact_info_text
+from .vision import is_ollama_running, extract_all_text_from_image, extract_location_profession_info_text
 from .publisher import publish_messages
 from .text_to_imagen import message_text_to_image
 from .media import create_not_classifycated_files
+
+# Teléfonos: soporta +58, 0412-, (0212), con espacios, puntos o guiones
+PHONE_PATTERN = r"(?:\+?\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d{2,4}[\s.-]?\d{2,4}[\s.-]?\d{2,4}"
+
+# Correos: el clásico, suficiente para la mayoría de casos
+EMAIL_PATTERN = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
 
 
 async def run(args):
     if args.extract_image_text:
         await extract_image_text(args)
+        return
+
+    if args.extract_info_from_text:
+        await extract_info_from_text(args)
         return
 
     if args.publish:
@@ -76,34 +86,83 @@ async def run(args):
         await disconnect_client()
         await close_database()
 
+async def extract_info_from_text(args):
+    if not args.channel:
+        print("Error: --extract_info_from_text requires --channel")
+        sys.exit(1)
+
+    await IA_service_is_running()
+
+    db = await get_database()
+    try:
+        total_pending = await db.get_pending_for_extract_location_profession_count(args.channel)
+        if total_pending == 0:
+            print(f"No pending text to process for {args.channel}.")
+            return
+
+        messages = await db.get_pending_for_extract_location_profession(args.channel, limit=args.limit)
+        processed = 0
+        failed = 0
+
+        print(f"\nFound {total_pending} pending text(s) for {args.channel}.")
+        if args.limit and args.limit < len(messages):
+            print(f"Processing {len(messages)} (--limit {args.limit}).")
+        else:
+            print(f"Processing all {len(messages)}.")
+
+        for i, msg in enumerate(messages, 1):
+            print(
+                f"\n[{i}/{len(messages)}] Processing message {msg.message_id} {msg.message_text[:40]}... {msg.channel_id}".replace('\n', ' ')
+            )
+            while True:
+                extracted_text, error = await extract_location_profession_info_text(msg.message_text)
+
+                if extracted_text is None:
+                    print("extracted_text is none")
+                
+                if extracted_text is not None:
+                    break
+                
+            phone_numbers = []
+            emails = []
+            if extracted_text:
+                phone_numbers = re.findall(PHONE_PATTERN, msg.message_text)
+                emails = re.findall(EMAIL_PATTERN, msg.message_text)
+
+            firstItemListExist = lambda x : x[0] if x.__len__() > 0 else None
+
+            if error:
+                print(f"  [ERROR] {error}")
+                failed += 1
+            else:
+                preview = (
+                    msg.message_text[:80].replace("\n", " ") if extracted_text else ""
+                )
+                print(f"  [OK] {preview}...")
+                print(f" Teléfonos: {phone_numbers}")
+                print(f" Correos:   {emails}")
+                print(f" message_id:   { msg.message_id}")
+                processed += 1
+
+            await db.update_info_contact(
+                msg.channel_id, msg.message_id, firstItemListExist(phone_numbers), firstItemListExist(emails)
+            )
+            await db.update_profession_location(
+                msg.channel_id, msg.message_id, extracted_text["professions"], extracted_text["locations"]
+            )
+
+            print(f"\nDone. Processed: {processed} | Failed: {failed}")
+    finally:
+        await close_database()
+
 
 async def extract_image_text(args):
-
-    # Teléfonos: soporta +58, 0412-, (0212), con espacios, puntos o guiones
-    PHONE_PATTERN = r"(?:\+?\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d{2,4}[\s.-]?\d{2,4}[\s.-]?\d{2,4}"
-
-    # Correos: el clásico, suficiente para la mayoría de casos
-    EMAIL_PATTERN = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
 
     if not args.channel:
         print("Error: --extract-image-text requires --channel")
         sys.exit(1)
 
-    print("Checking Ollama status...")
-    if not await is_ollama_running():
-        print("Ollama is not running at http://localhost:11434")
-        response = (
-            input("Start Ollama now? Open a terminal and run: ollama serve  [Y/n]: ")
-            .strip()
-            .lower()
-        )
-        if response in ("", "y", "yes"):
-            print(
-                "Please start Ollama in another terminal, then run this command again."
-            )
-        else:
-            print("Aborted.")
-        sys.exit(0)
+    await IA_service_is_running()
 
     db = await get_database()
     try:
@@ -279,6 +338,11 @@ def main():
         help="Extract text from images in a channel using Ollama vision model",
     )
     parser.add_argument(
+        "--extract_info_from_text",
+        action="store_true",
+        help="Extract info from texts in a channel using llama model",
+    )
+    parser.add_argument(
         "--publish",
         action="store_true",
         help="Publish posts from database to a destination channel",
@@ -342,3 +406,20 @@ def main():
         print("\nInterrupted.")
     finally:
         loop.close()
+
+async def IA_service_is_running():
+    print("Checking Ollama status...")
+    if not await is_ollama_running():
+        print("Ollama is not running at http://localhost:11434")
+        response = (
+            input("Start Ollama now? Open a terminal and run: ollama serve  [Y/n]: ")
+            .strip()
+            .lower()
+        )
+        if response in ("", "y", "yes"):
+            print(
+                "Please start Ollama in another terminal, then run this command again."
+            )
+        else:
+            print("Aborted.")
+        sys.exit(0)
