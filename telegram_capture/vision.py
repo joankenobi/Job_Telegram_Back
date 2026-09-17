@@ -249,12 +249,12 @@ async def extract_location_profession_info_text(text: str) -> tuple[dict | None,
             content2json["locations"] = (
                 ",".join(content2json["locations"])
                 if content2json["locations"][0] != "No location found"
-                else None
+                else ''
             )
             content2json["professions"] = (
                 ",".join(content2json["professions"])
                 if content2json["professions"][0] != "No profession found"
-                else None
+                else ''
             )
             print(content2json)
             return content2json, None

@@ -258,7 +258,7 @@ class Database:
             "SELECT COUNT(*) FROM messages WHERE channel_id = ? "
             "AND (message_text IS NOT NULL OR message_text != '')"
             "AND (image_text IS NULL OR image_text = '') "
-            "AND (location IS NULL OR profession = '')",
+            "AND (location IS NULL AND profession IS NULL)",
             (channel_id,),
         )
         row = await cursor.fetchone()
@@ -275,7 +275,7 @@ class Database:
             "SELECT * FROM messages WHERE channel_id = ? "
             "AND (message_text IS NOT NULL OR message_text != '')"
             "AND (image_text IS NULL OR image_text = '') "
-            "AND (location IS NULL OR profession = '')"
+            "AND (location IS NULL AND profession IS NULL)"
             "ORDER BY date ASC"
         )
         params: list = [channel_id]

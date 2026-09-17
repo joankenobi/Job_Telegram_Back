@@ -141,6 +141,8 @@ async def extract_info_from_text(args):
                 print(f"  [OK] {preview}...")
                 print(f" Teléfonos: {phone_numbers}")
                 print(f" Correos:   {emails}")
+                print(f" profession:   { extracted_text['professions']}")
+                print(f" locations:   { extracted_text['locations']}")
                 print(f" message_id:   { msg.message_id}")
                 processed += 1
 
