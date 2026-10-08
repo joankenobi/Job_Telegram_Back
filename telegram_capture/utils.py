@@ -37,6 +37,27 @@ def _fix_invalid_escapes(s: str) -> str:
     return ''.join(result)
 
 
+def _sanitize_surrogates(obj):
+    r"""
+    Elimina surrogates sueltos (U+D800..U+DFFF) de strings en la estructura.
+
+    json.loads acepta escapes \uXXXX de surrogates incompletos (p. ej. un
+    "\ud83d" sin su mitad baja) y produce str con caracteres que no tienen
+    representación UTF-8. SQLite (y cualquier codificación UTF-8) falla al
+    guardarlos con UnicodeEncodeError.
+    """
+    if isinstance(obj, str):
+        return "".join(ch for ch in obj if not 0xD800 <= ord(ch) <= 0xDFFF)
+    if isinstance(obj, list):
+        return [_sanitize_surrogates(item) for item in obj]
+    if isinstance(obj, dict):
+        return {
+            _sanitize_surrogates(key): _sanitize_surrogates(value)
+            for key, value in obj.items()
+        }
+    return obj
+
+
 def parse_llm_json(content: str) -> dict:
     # Saca los fences ```json ... ``` y cualquier ruido
     try:
@@ -48,7 +69,9 @@ def parse_llm_json(content: str) -> dict:
         json_str = content[start : end + 1]
         # Sanear escapes inválidos antes de parsear
         json_str = _fix_invalid_escapes(json_str)
-        return json.loads(json_str)
+        parsed = json.loads(json_str)
+        # Sanear surrogates sueltos que el LLM pudo generar en escapes \uXXXX
+        return _sanitize_surrogates(parsed)
     except Exception as e:
         print(e)
         raise e

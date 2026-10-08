@@ -74,7 +74,8 @@ ollama serve
 
 ```bash
 .\venv\Scripts\python.exe run.py --channel "@puveb" --month "02-2026" --limit 10
-```
+.\venv\Scripts\python.exe run.py --channel "@any_pets" --month "02-2026" --limit 10
+```239278_20261006
 
 ### List your channels and groups
 

@@ -9,6 +9,7 @@ from .client import connect_client, disconnect_client
 from .database import get_database, close_database
 from .capture import capture_channel
 from .vision import is_ollama_running, extract_all_text_from_image, extract_location_profession_info_text
+from .utils import _sanitize_surrogates
 from .publisher import publish_messages
 from .text_to_imagen import message_text_to_image
 from .media import create_not_classifycated_files
@@ -150,7 +151,10 @@ async def extract_info_from_text(args):
                 msg.channel_id, msg.message_id, firstItemListExist(phone_numbers), firstItemListExist(emails)
             )
             await db.update_profession_location(
-                msg.channel_id, msg.message_id, extracted_text["professions"], extracted_text["locations"]
+                msg.channel_id,
+                msg.message_id,
+                _sanitize_surrogates(extracted_text["professions"]),
+                _sanitize_surrogates(extracted_text["locations"]),
             )
 
             print(f"\nDone. Processed: {processed} | Failed: {failed}")
@@ -226,10 +230,16 @@ async def extract_image_text(args):
                 msg.channel_id, msg.message_id, firstItemListExist(phone_numbers), firstItemListExist(emails)
             )
             await db.update_profession_location(
-                msg.channel_id, msg.message_id, extracted_text["professions"], extracted_text["locations"]
+                msg.channel_id,
+                msg.message_id,
+                _sanitize_surrogates(extracted_text["professions"]),
+                _sanitize_surrogates(extracted_text["locations"]),
             )
             await db.update_image_text(
-                msg.channel_id, msg.message_id, extracted_text['imagen_text'], error
+                msg.channel_id,
+                msg.message_id,
+                _sanitize_surrogates(extracted_text['imagen_text']),
+                error,
             )
 
         print(f"\nDone. Processed: {processed} | Failed: {failed}")
