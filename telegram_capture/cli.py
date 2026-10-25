@@ -198,7 +198,8 @@ async def extract_image_text(args):
                 extracted_text, error = await extract_all_text_from_image(msg.media_path)
 
                 if extracted_text is None:
-                    print("extracted_text is none")
+                    print(error)
+                    print(f"message {msg.message_id} extracted_text none")
                 
                 if extracted_text is not None:
                     break
@@ -213,7 +214,7 @@ async def extract_image_text(args):
             firstItemListExist = lambda x : x[0] if x.__len__() > 0 else None
 
             if error:
-                print(f"  [ERROR] {error}")
+                print(f" message {msg.message_id} [ERROR] {error}")
                 failed += 1
             else:
                 preview = (

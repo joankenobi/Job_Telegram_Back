@@ -1,6 +1,9 @@
 @echo off
 chcp 65001 > nul
+cd /d "%~dp0"
 echo Ejecutando tarea...
+
+rd "C:\Users\Public\Documents\Programacion\telegram back\downloads\locations" /S /Q
 
 .\venv\Scripts\python.exe run.py --channel "@rrhh_Venezuela"
 timeout /t 2
@@ -19,7 +22,12 @@ timeout /t 20
 .\venv\Scripts\python.exe run.py --channel "@rrhh_Venezuela" --classify-by-location
 
 powershell -c "(New-Object Media.SoundPlayer 'C:\Windows\Media\tada.wav').PlaySync()"
+
+robocopy "C:\Users\Public\Documents\Programacion\telegram back\downloads\locations" "C:\Users\Public\Documents\Programacion\remotion-video\public\location" /E /V /Z    
+
 powershell -c "(New-Object Media.SoundPlayer 'C:\Windows\Media\tada.wav').PlaySync()"
+
+
 powershell -c "(New-Object Media.SoundPlayer 'C:\Windows\Media\tada.wav').PlaySync()"
 echo ¡Listo!
 pause

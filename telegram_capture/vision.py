@@ -54,6 +54,7 @@ Return ONLY JSON with exactly these keys:
 
 Rules:
 - A location is a place: country, city, state, neighborhood, street, or address.
+- A location is not a digital location like: web direction, file direction, ip direction.
 - A profession is a job, trade, or occupation (e.g. "doctor", "cocinero", "electrician").
 - List each item once, , separated by commas, in the language of the text. Never invent.
 - If no profession appears, add exactly: No profession found to professions.
@@ -175,7 +176,11 @@ async def extract_all_text_from_image(image_path: str) -> tuple[dict | None, str
             print(content2json)
             return content2json, None
     except httpx.HTTPStatusError as e:
-        return None, f"HTTP {e.response.status_code}: {e.response.text}"
+        extracted_text = dict()
+        extracted_text["imagen_text"] = f"HTTP {e.response.status_code}: {e.response.text}"
+        extracted_text["professions"] = None
+        extracted_text["locations"] = None
+        return extracted_text, f"HTTP {e.response.status_code}: {e.response.text}"
     except FileNotFoundError:
         extracted_text = dict()
         extracted_text["imagen_text"] = "No such file or directory: " + image_path
